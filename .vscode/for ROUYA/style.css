@@ -281,3 +281,10 @@ input[type="radio"] {
       border-style: solid;
       border-color: #333 transparent transparent transparent;
     }
+
+    .latest-title {
+        text-align: left;
+        margin-left: 10%;
+        font-size: 30px;
+        margin-top: 30px;
+    }
