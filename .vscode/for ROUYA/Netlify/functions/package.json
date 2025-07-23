@@ -12,4 +12,5 @@
     "dependencies": {
         "openai": "^4.x.x"
     }
+    
 }
