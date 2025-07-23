@@ -43,7 +43,10 @@ document.addEventListener('DOMContentLoaded', () => {
   animateSwitchText('.switch_text2', switchText2, 4000);
 });
 
+// script.js
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Get references to HTML elements
     const keywordInput = document.getElementById('keywordInput');
     const searchButton = document.getElementById('searchButton');
     const dateFilter = document.getElementById('dateFilter');
@@ -54,157 +57,64 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingIndicator = document.getElementById('loadingIndicator');
     const noResultsMessage = document.getElementById('noResultsMessage');
 
-    // --- Mock Data (Simulated API Response) ---
-    // In a real application, this data would come from your backend API calls.
-    const mockData = [
-        {
-            id: 'post1',
-            title: 'New AI features rolled out on Instagram!',
-            content: 'Instagram has just announced a series of new AI-powered features for content creation and engagement...',
-            source: 'instagram',
-            date: '2025-07-22T10:00:00Z',
-            type: 'posts',
-            isUserVerified: true,
-            keywords: ['AI', 'Instagram', 'features', 'content']
-        },
-        {
-            id: 'news1',
-            title: 'Khaleej Times: Dubai unveils ambitious new sustainable city project',
-            content: 'Dubai continues its stride towards sustainability with the announcement of a groundbreaking new urban development...',
-            source: 'khaleej_times',
-            date: '2025-07-21T14:30:00Z',
-            type: 'news',
-            isUserVerified: false, // News articles typically aren't 'user verified' in this context
-            keywords: ['Dubai', 'sustainable', 'city', 'project', 'Khaleej Times']
-        },
-        {
-            id: 'blog1',
-            title: 'The Future of Travel: How Technology is Shaping Our Journeys',
-            content: 'From AI-powered recommendations to virtual reality tours, technology is revolutionizing the way we explore the world...',
-            source: 'blog_a',
-            date: '2025-07-20T09:00:00Z',
-            type: 'blogs',
-            isUserVerified: true,
-            keywords: ['Travel', 'technology', 'future', 'AI']
-        },
-        {
-            id: 'post2',
-            title: 'Exploring the latest summer trends in fashion on TikTok!',
-            content: 'Fashion influencers are showcasing vibrant new styles for the summer season...',
-            source: 'tiktok',
-            date: '2025-07-23T08:00:00Z',
-            type: 'posts',
-            isUserVerified: true,
-            keywords: ['summer', 'trends', 'fashion', 'TikTok']
-        },
-        {
-            id: 'news2',
-            title: 'X (Twitter) announces new content moderation policies',
-            content: 'Amidst ongoing discussions, X has released updated guidelines for content moderation...',
-            source: 'x',
-            date: '2025-07-19T11:00:00Z',
-            type: 'news',
-            isUserVerified: false,
-            keywords: ['X', 'Twitter', 'moderation', 'policies']
-        },
-        {
-            id: 'post3',
-            title: 'Facebook Group Discussion: Best Breakfast Spots in Town',
-            content: 'Join the conversation about the most delicious breakfast places. Share your favorites!',
-            source: 'facebook',
-            date: '2025-07-18T16:00:00Z',
-            type: 'posts',
-            isUserVerified: false,
-            keywords: ['Facebook', 'Breakfast', 'food', 'local']
-        },
-        {
-            id: 'blog2',
-            title: 'Deep Dive into Sheikh Zayed Grand Mosque Architecture',
-            content: 'A detailed look at the stunning design and cultural significance of one of the world\'s largest mosques...',
-            source: 'blog_a',
-            date: '2025-07-15T13:00:00Z',
-            type: 'blogs',
-            isUserVerified: true,
-            keywords: ['Sheikh Zayed', 'mosque', 'architecture', 'culture']
-        },
-        {
-            id: 'news3',
-            title: 'BMW unveils new electric concept car at auto show',
-            content: 'The German automaker showcases its vision for the future of electric vehicles...',
-            source: 'news_site_b',
-            date: '2025-07-10T10:00:00Z',
-            type: 'news',
-            isUserVerified: false,
-            keywords: ['BMW', 'electric', 'car', 'auto']
-        }
-    ];
-
-    // Function to filter and display results
-    const performSearch = () => {
+    // Function to perform the search by calling the Netlify Function
+    const performSearch = async () => { // Make this function asynchronous
         const keyword = keywordInput.value.toLowerCase().trim();
         const selectedDate = dateFilter.value;
-        const selectedSource = sourceFilter.value;
+        const selectedSource = sourceFilter.value.toLowerCase().replace(' ', '_'); // Ensure format matches backend
         const selectedContentType = document.querySelector('input[name="contentType"]:checked').value;
         const isUserVerified = userVerifiedCheckbox.checked;
         const mustMatch = mustMatchCheckbox.checked;
 
-        // Show loading indicator
-        searchResultsContainer.innerHTML = ''; // Clear previous results
+        // Show loading indicator and clear previous results
+        searchResultsContainer.innerHTML = '';
         noResultsMessage.classList.add('hidden');
         loadingIndicator.classList.remove('hidden');
 
-        // Simulate API call delay
-        setTimeout(() => {
-            let filteredResults = mockData.filter(item => {
-                // Keyword filter
-                const itemText = (item.title + ' ' + item.content + ' ' + (item.keywords ? item.keywords.join(' ') : '')).toLowerCase();
-                if (keyword && mustMatch && !itemText.includes(keyword)) {
-                    return false;
-                }
-                if (keyword && !mustMatch && !itemText.includes(keyword)) {
-                    // If not 'must match', allow if keyword is empty or present
-                    if (keyword && !itemText.includes(keyword)) {
-                        return false; // If keyword is entered but not found, filter out
-                    }
-                }
-
-                // Date filter
-                const itemDate = new Date(item.date);
-                const now = new Date();
-                if (selectedDate === 'past_day' && (now - itemDate) > (24 * 60 * 60 * 1000)) return false;
-                if (selectedDate === 'past_week' && (now - itemDate) > (7 * 24 * 60 * 60 * 1000)) return false;
-                if (selectedDate === 'past_month' && (now - itemDate) > (30 * 24 * 60 * 60 * 1000)) return false; // Approx month
-                if (selectedDate === 'past_year' && (now - itemDate) > (365 * 24 * 60 * 60 * 1000)) return false; // Approx year
-
-                // Source filter
-                if (selectedSource !== 'all' && item.source !== selectedSource) return false;
-
-                // Content Type filter
-                if (selectedContentType === 'news' && item.type !== 'news') return false;
-                if (selectedContentType === 'blogs' && item.type !== 'blogs') return false;
-                if (selectedContentType === 'posts' && item.type !== 'posts') return false;
-
-                // User verified filter
-                if (isUserVerified && !item.isUserVerified) return false;
-
-                return true;
+        try {
+            // Make the API call to your Netlify Function
+            const response = await fetch('/.netlify/functions/search', { // Path to your Netlify Function
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    keyword,
+                    dateFilter: selectedDate,
+                    sourceFilter: selectedSource,
+                    contentType: selectedContentType,
+                    isUserVerified,
+                    mustMatch
+                }),
             });
+
+            // Check if the response was successful
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message || 'Unknown error'}`);
+            }
+
+            // Parse the JSON response from your Netlify Function
+            const results = await response.json();
 
             // Hide loading indicator
             loadingIndicator.classList.add('hidden');
 
-            if (filteredResults.length === 0) {
+            // Display results or no results message
+            if (results.length === 0) {
                 noResultsMessage.classList.remove('hidden');
                 noResultsMessage.textContent = 'No results found for your search criteria.';
             } else {
                 noResultsMessage.classList.add('hidden');
-                filteredResults.forEach(item => {
+                results.forEach(item => {
                     const resultCard = document.createElement('div');
-                    resultCard.className = 'result-card p-6 flex flex-col space-y-2';
+                    resultCard.className = 'result-card'; // Your custom class
                     resultCard.innerHTML = `
-                        <h3 class="text-xl font-semibold text-gray-900">${item.title}</h3>
-                        <p class="text-sm text-gray-600">${item.content.substring(0, 150)}...</p>
-                        <div class="flex justify-between items-center text-xs text-gray-500 mt-2">
+                        <h3>${item.title}</h3>
+                        <p>${item.content.substring(0, 150)}...</p>
+                        ${item.summary ? `<p class="result-summary">Summary: ${item.summary}</p>` : ''}
+                        ${item.sentiment ? `<p class="result-sentiment">Sentiment: ${item.sentiment}</p>` : ''}
+                        <div class="result-meta">
                             <span class="capitalize">${item.source.replace(/_/g, ' ')} (${item.type})</span>
                             <span>${new Date(item.date).toLocaleDateString()}</span>
                         </div>
@@ -212,7 +122,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     searchResultsContainer.appendChild(resultCard);
                 });
             }
-        }, 1000); // Simulate 1 second network delay
+        } catch (error) {
+            console.error('Search failed:', error);
+            loadingIndicator.classList.add('hidden');
+            noResultsMessage.classList.remove('hidden');
+            noResultsMessage.textContent = `Error during search: ${error.message}. Please try again.`;
+            searchResultsContainer.innerHTML = ''; // Clear any partial results
+        }
     };
 
     // Event Listeners
@@ -223,6 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Initial message
+    // Initial message on page load
     noResultsMessage.classList.remove('hidden');
 });
