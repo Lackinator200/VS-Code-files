@@ -1,17 +1,19 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TrendSift</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Link to Google Fonts for Inter (if you want to use it) -->
+    <link href="style.css" rel="stylesheet">
     <script src="script.js" defer></script>
 </head>
 <body>
     <header>
         <div class="topbar">
             <div class="logo">
+                <!-- Using a placeholder image for the logo -->
                 <img src="logo.png" alt="TrendSift Logo">
             </div>
             <nav class="navigation">
@@ -20,109 +22,131 @@
             </nav>
         </div>
     </header>
-    <div class="main-content hidden">
+
+    <div class="main-content">
         <div class="title">
             <h1>Search the&nbsp;<span class="switch_text"></span> About</h1>
             <h1>&nbsp;<span class="switch_text2 styletext"></span></h1>
         </div>
+
         <div class="search-box">
-            <input type="text" class="search-input" placeholder="Enter your Keywords...">
-            <button class="search-button">Search</button>
+            <input type="text" id="keywordInput" class="search-input" placeholder="Enter your Keywords...">
+            <button id="searchButton" class="search-button">Search</button>
         </div>
+
         <div class="filter-box">
             <div class="filter-content">
                 <div class="dropdowns">
                     <div class="dropdown-row">
-                        <label class="dropdown-label" for="date">Date:</label>
-                        <select id="date" class="styled-select">
-                        <option>latest</option>
-                        <option>oldest</option>
-                        <option>this week</option>
-                        <option>this month</option>
-                    </select>
+                        <label class="dropdown-label" for="dateFilter">Date:</label>
+                        <select id="dateFilter" class="styled-select">
+                            <option value="latest">latest</option>
+                            <option value="past_day">Past 24 hours</option>
+                            <option value="past_week">this week</option>
+                            <option value="past_month">this month</option>
+                            <option value="past_year">Past year</option>
+                            <!-- 'oldest' is omitted as it implies sorting, not filtering a time range -->
+                        </select>
                     </div>
 
                     <div class="dropdown-row">
-                        <label class="dropdown-label" for="source">Source:</label>
-                        <select id="source" class="styled-select">
-                        <option>All</option>
-                        <option>Facebook</option>
-                        <option>Instagram</option>
-                        <option>X</option>
-                        <option>Khaleej Times</option>
-                    </select>
+                        <label class="dropdown-label" for="sourceFilter">Source:</label>
+                        <select id="sourceFilter" class="styled-select">
+                            <option value="all">All</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="instagram">Instagram</option>
+                            <option value="x">X</option>
+                            <option value="tiktok">TikTok</option>
+                            <option value="khaleej_times">Khaleej Times</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="types">
-                    <label><input type="radio" name="type" /> News</label>
-                    <label><input type="radio" name="type" /> Blogs</label>
-                    <label><input type="radio" name="type" /> Posts</label>
+                    <label><input type="radio" name="contentType" value="news" /> News</label>
+                    <label><input type="radio" name="contentType" value="blogs" /> Blogs</label>
+                    <label><input type="radio" name="contentType" value="posts" checked /> Posts</label>
                 </div>
 
                 <div class="toggles">
                     <label>
-                    User verified:
-                    <input type="checkbox" />
+                        User verified:
+                        <input type="checkbox" id="userVerified" />
                     </label>
                     <label>
-                    Must Match:
-                    <input type="checkbox" checked />
+                        Must Match:
+                        <input type="checkbox" id="mustMatch" checked />
                     </label>
                 </div>
             </div>
         </div>
+
         <div class="latest-posts">
             <h1 class="latest-title">Keywords that is trending
                 <div class="tooltip">?
-                    <div class="tooltiptext">Everyweek, we update the keywords depending on the trending happening lately.</div>
+                    <div class="tooltiptext">Every week, we update the keywords depending on the trending happening lately.</div>
                 </div>
             </h1>
-        <div class="trending-items-container">
-            <div class="trending-item">
-                <span class="keyword-text">Sheikh Zayed</span>
-                <span class="trending-since">Trending since: (date)</span>
+            <div class="trending-items-container">
+                <div class="trending-item">
+                    <span class="keyword-text">Sheikh Zayed</span>
+                    <span class="trending-since">Trending since: (date)</span>
+                </div>
+                <div class="trending-item">
+                    <span class="keyword-text">YouTube</span>
+                    <span class="trending-since">Trending since: (date)</span>
+                </div>
+                <div class="trending-item">
+                    <span class="keyword-text">Breakfast</span>
+                    <span class="trending-since">Trending since: (date)</span>
+                </div>
+                <div class="trending-item">
+                    <span class="keyword-text">University</span>
+                    <span class="trending-since">Trending since: (date)</span>
+                </div>
             </div>
-            <div class="trending-item">
-                <span class="keyword-text">YouTube</span>
-                <span class="trending-since">Trending since: (date)</span>
-            </div>
-            <div class="trending-item">
-                <span class="keyword-text">Breakfast</span>
-                <span class="trending-since">Trending since: (date)</span>
-            </div>
-            <div class="trending-item">
-                <span class="keyword-text">University</span>
-                <span class="trending-since">Trending since: (date)</span>
+            <div class="trending-items-container">
+                <div class="trending-item">
+                    <span class="keyword-text">Spotify</span>
+                    <span class="trending-since">Trending since: (date)</span>
+                </div>
+                <div class="trending-item">
+                    <span class="keyword-text">Summer trend</span>
+                    <span class="trending-since">Trending since: (date)</span>
+                </div>
+                <div class="trending-item">
+                    <span class="keyword-text">Travel</span>
+                    <span class="trending-since">Trending since: (date)</span>
+                </div>
+                <div class="trending-item">
+                    <span class="keyword-text">BMW</span>
+                    <span class="trending-since">Trending since: (date)</span>
+                </div>
             </div>
         </div>
-        <div class="trending-items-container">
-            <div class="trending-item">
-                <span class="keyword-text">Spotify</span>
-                <span class="trending-since">Trending since: (date)</span>
-            </div>
-            <div class="trending-item">
-                <span class="keyword-text">Summer trend</span>
-                <span class="trending-since">Trending since: (date)</span>
-            </div>
-            <div class="trending-item">
-                <span class="keyword-text">Travel</span>
-                <span class="trending-since">Trending since: (date)</span>
-            </div>
-            <div class="trending-item">
-                <span class="keyword-text">BMW</span>
-                <span class="trending-since">Trending since: (date)</span>
+
+        <!-- Search Results Display Area -->
+        <div id="searchResults" class="search-results-container">
+            <!-- Results will be injected here by JavaScript -->
+            <div class="no-results-message" id="noResultsMessage">
+                Enter keywords and click 'SEARCH' to see results.
             </div>
         </div>
+
+        <!-- Loading Indicator -->
+        <div id="loadingIndicator" class="loading-indicator hidden">
+            <div class="spinner"></div>
+            <p>Searching...</p>
         </div>
+
     </div>
-</body>
-<bottom>
+
     <footer>
         <div class="footer-content">
+            <!-- Using a placeholder image for the footer logo -->
             <img src="logo.png" alt="TrendSift Logo" class="footer-logo">
-        <p>&copy; 2025 TrendSift. All rights reserved.</p>
+            <p>&copy; 2025 TrendSift. All rights reserved.</p>
         </div>
     </footer>
-</bottom>
+</body>
 </html>
