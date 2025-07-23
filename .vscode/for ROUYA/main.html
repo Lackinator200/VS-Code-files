@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrendSift</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <header>
+        <div class="topbar">
+            <div class="logo">
+                <img src="logo.png" alt="TrendSift Logo">
+            </div>
+            <nav class="navigation">
+                <a class="link" href="#about">About</a>
+                <a class="home" href="main.html">Search</a>
+            </nav>
+        </div>
+    </header>
+    <div class="main-content hidden">
+        <div class="title">
+            <h1>Search the&nbsp;<span class="switch_text"></span> About</h1>
+            <h1>&nbsp;<span class="switch_text2 styletext"></span>!</h1>
+        </div>
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="Enter your Keywords...">
+            <button class="search-button">Search</button>
+        </div>
+        <div class="filter-box">
+            <div class="filter-content">
+                <div class="dropdowns">
+                    <div class="dropdown-row">
+                        <label class="dropdown-label" for="date">Date:</label>
+                        <select id="date" class="styled-select">
+                        <option>latest</option>
+                        <option>oldest</option>
+                        <option>this week</option>
+                        <option>this month</option>
+                    </select>
+                    </div>
+
+                    <div class="dropdown-row">
+                        <label class="dropdown-label" for="source">Source:</label>
+                        <select id="source" class="styled-select">
+                        <option>All</option>
+                        <option>Facebook</option>
+                        <option>Instagram</option>
+                        <option>X</option>
+                        <option>Khaleej Times</option>
+                    </select>
+                    </div>
+                </div>
+
+                <div class="types">
+                    <label><input type="radio" name="type" /> News</label>
+                    <label><input type="radio" name="type" /> Blogs</label>
+                    <label><input type="radio" name="type" /> Posts</label>
+                </div>
+
+                <div class="toggles">
+                    <label>
+                    User verified:
+                    <input type="checkbox" />
+                    </label>
+                    <label>
+                    Must Match:
+                    <input type="checkbox" checked />
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="latest-posts">
+            <h1>Keywords that is trending
+                <div class="tooltip">?
+                    <div class="tooltiptext">Everyweek, we update the keywords depending on the trending </div>
+                </div>
+            </h1>
+        </div>
+    </div>
+</body>
+</html>
