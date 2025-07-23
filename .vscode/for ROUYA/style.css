@@ -4,7 +4,8 @@ html {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
-    height: 1000px;
+    width: 100%;
+    height: 1300px;
 }
 .topbar {
     background-color: #FAFAFA;
@@ -288,3 +289,80 @@ input[type="radio"] {
         font-size: 30px;
         margin-top: 30px;
     }
+
+    .trending-keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.keyword {
+  background-color: #f0f0f0;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 14px;
+  box-shadow: 0px 1px 3px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.keyword:hover {
+  background-color: #e2e2e2;
+}
+
+.trending-items-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 70px; /* Equivalent to gap-3 */
+    margin-top: 20px; /* Equivalent to mt-5 */
+    margin-left: 14%;
+}
+
+.trending-item {
+    background-color: #929292; /* Equivalent to bg-gray-100 */
+    border-radius: 0.75rem; /* Equivalent to rounded-lg */
+    padding: 0.5rem 1rem; /* Equivalent to px-4 py-2 */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* Equivalent to shadow-sm */
+    transition: box-shadow 300ms ease-in-out; /* Equivalent to transition-shadow duration-300 */
+}
+
+.trending-item:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Equivalent to hover:shadow-md */
+}
+
+.keyword-text {
+    color: #000; /* Equivalent to text-gray-900 */
+    font-weight: 500; /* Equivalent to font-medium */
+    font-size: 1.75rem; /* Equivalent to text-base */
+    background-color: #fff;
+    width: 200px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.trending-since {
+    color: #000000; /* Equivalent to text-gray-500 */
+    font-size: 1rem; /* Equivalent to text-xs */
+    margin-top: 0.125rem; /* Equivalent to mt-0.5 */
+}
+
+.footer-content {
+    margin-top: 300px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: left;
+    padding: 20px;
+    background-color: #FAFAFA;
+}
+
+.footer-logo {
+    width: auto;
+    height: 50px;
+    margin-right: 20px;
+}
