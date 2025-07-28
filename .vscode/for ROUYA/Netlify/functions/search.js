@@ -1,17 +1,12 @@
 // netlify/functions/search.js
 
 // Import necessary libraries
-// 'node-fetch' is needed if your Node.js runtime doesn't have global fetch (older versions)
-// Netlify functions typically run on Node.js 18+, which has native fetch.
-// const fetch = require('node-fetch'); // Uncomment if you encounter 'fetch is not defined'
-
-// Import the OpenAI client library
-// You need to install this: npm install openai
-const { OpenAI } = require('openai');
+// const fetch = require('node-fetch'); // Uncomment if you encounter 'fetch is not defined' (Node.js < 18)
+const { OpenAI } = require('openai'); // Assuming you're still using OpenAI
 
 // This is your main Netlify Function handler
 exports.handler = async (event, context) => {
-    // 1. Basic Request Validation
+    // 1. Basic Request Validation (existing code)
     if (event.httpMethod !== 'POST') {
         return {
             statusCode: 405,
@@ -31,29 +26,71 @@ exports.handler = async (event, context) => {
         };
     }
 
-    // Destructure parameters from the frontend request
     const { keyword, dateFilter, sourceFilter, contentType, isUserVerified, mustMatch } = params;
 
     console.log('Received search request:', { keyword, dateFilter, sourceFilter, contentType, isUserVerified, mustMatch });
 
-    // --- 2. Make API Calls to Social Media/News Platforms (Placeholder) ---
-    // THIS IS WHERE YOU WOULD INTEGRATE WITH REAL PLATFORM APIs.
-    // This is the most complex part and requires platform-specific integration.
-    // You will need to:
-    // a. Obtain API keys/access tokens for each platform (e.g., Facebook App ID/Secret, X Bearer Token).
-    // b. Store these securely as Netlify Environment Variables (see Step 4).
-    // c. Use `fetch` or a dedicated client library (if available) to make HTTP requests
-    //    to each platform's API endpoint (e.g., Facebook Graph API, X API, TikTok API, Khaleej Times API).
-    // d. Handle authentication, rate limits, and error responses for each platform.
-    // e. Parse and normalize the data received from each platform into a consistent format.
-
     let allResults = [];
 
-    // --- Simulated API Calls (Replace with your real API calls) ---
-    // For demonstration, we'll use a simplified mock data structure here.
-    // In a real scenario, you would fetch this data from the actual APIs.
-    // The `keyword` is used to make the mock data somewhat dynamic.
-    const mockLiveResults = [
+    // --- 2. Make API Calls to Social Media/News Platforms ---
+
+    // --- NewsAPI.org Integration ---
+    const newsApiKey = process.env.NEWS_API_KEY;
+    if (newsApiKey && (sourceFilter === 'all' || sourceFilter === 'newsapi_org' || sourceFilter === 'news')) {
+        try {
+            // NewsAPI.org 'everything' endpoint for broad search
+            // You can adjust parameters like language, sortBy, domains, etc.
+            // Note: dateFilter mapping might need more precise logic for 'from' and 'to' dates
+            const newsApiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(keyword)}&language=en&sortBy=relevancy&apiKey=${newsApiKey}`;
+
+            // Example for date filtering (NewsAPI.org uses 'from' and 'to' parameters)
+            // This is a simplified mapping. For production, you'd calculate exact dates.
+            const now = new Date();
+            let fromDate;
+            if (dateFilter === 'past_day') {
+                fromDate = new Date(now.setDate(now.getDate() - 1)).toISOString().split('T')[0];
+            } else if (dateFilter === 'past_week') {
+                fromDate = new Date(now.setDate(now.getDate() - 7)).toISOString().split('T')[0];
+            } else if (dateFilter === 'past_month') {
+                fromDate = new Date(now.setMonth(now.getMonth() - 1)).toISOString().split('T')[0];
+            } else if (dateFilter === 'past_year') {
+                fromDate = new Date(now.setFullYear(now.getFullYear() - 1)).toISOString().split('T')[0];
+            }
+
+            let finalNewsApiUrl = newsApiUrl;
+            if (fromDate) {
+                finalNewsApiUrl += `&from=${fromDate}`;
+            }
+
+            console.log("Fetching from NewsAPI:", finalNewsApiUrl);
+            const newsResponse = await fetch(finalNewsApiUrl);
+            const newsData = await newsResponse.json();
+
+            if (newsData.status === 'ok' && newsData.articles) {
+                const newsArticles = newsData.articles.map(article => ({
+                    id: `newsapi-${article.source.id || article.source.name}-${article.publishedAt}`,
+                    title: article.title,
+                    content: article.description || article.content, // Use description if content is truncated
+                    source: article.source.name.toLowerCase().replace(/\s/g, '_'), // Normalize source name
+                    date: article.publishedAt,
+                    type: 'news',
+                    isUserVerified: false, // News articles are typically not 'user verified'
+                    url: article.url, // Add the original article URL
+                    keywords: [keyword, 'news', article.source.name.toLowerCase()] // Example keywords
+                }));
+                allResults = allResults.concat(newsArticles);
+            } else {
+                console.error("Error from NewsAPI:", newsData.message);
+            }
+
+        } catch (error) {
+            console.error("Failed to fetch from NewsAPI:", error);
+        }
+    }
+
+    // --- Existing Mock Social Media Data (for other sources) ---
+    // You would replace these with actual API calls to Facebook, X, TikTok, Instagram etc.
+    const mockSocialMediaResults = [
         {
             id: 'live_post_1',
             title: `Breaking: "${keyword || 'AI'}" trending on X!`,
@@ -63,26 +100,6 @@ exports.handler = async (event, context) => {
             type: 'posts',
             isUserVerified: true,
             keywords: [keyword, 'X', 'trending']
-        },
-        {
-            id: 'live_news_1',
-            title: `Khaleej Times: Impact of "${keyword || 'economy'}" on local economy`,
-            content: `An in-depth analysis by Khaleej Times on how current events related to "${keyword || 'economy'}" are shaping the region's economic outlook. This is a mock result.`,
-            source: 'khaleej_times',
-            date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
-            type: 'news',
-            isUserVerified: false,
-            keywords: [keyword, 'economy', 'Khaleej Times']
-        },
-        {
-            id: 'live_tiktok_1',
-            title: `Viral TikTok: "${keyword || 'challenge'}" challenge takes over!`,
-            content: `A new challenge featuring "${keyword || 'challenge'}" is gaining immense popularity on TikTok, with millions of views. This is a mock result.`,
-            source: 'tiktok',
-            date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
-            type: 'posts',
-            isUserVerified: true,
-            keywords: [keyword, 'TikTok', 'challenge', 'viral']
         },
         {
             id: 'live_facebook_1',
@@ -103,74 +120,79 @@ exports.handler = async (event, context) => {
             type: 'posts',
             isUserVerified: true,
             keywords: [keyword, 'Instagram', 'fashion']
+        },
+        {
+            id: 'live_tiktok_1',
+            title: `Viral TikTok: "${keyword || 'challenge'}" challenge takes over!`,
+            content: `A new challenge featuring "${keyword || 'challenge'}" is gaining immense popularity on TikTok, with millions of views. This is a mock result.`,
+            source: 'tiktok',
+            date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+            type: 'posts',
+            isUserVerified: true,
+            keywords: [keyword, 'TikTok', 'challenge', 'viral']
         }
     ];
 
-    allResults = mockLiveResults; // In a real app, this would be combined results from all APIs
+    // Only add mock social media results if 'all' sources or a specific social media source is selected
+    if (sourceFilter === 'all' || ['facebook', 'instagram', 'x', 'tiktok'].includes(sourceFilter)) {
+        allResults = allResults.concat(mockSocialMediaResults.filter(item => {
+            if (sourceFilter !== 'all' && item.source !== sourceFilter) {
+                return false;
+            }
+            return true;
+        }));
+    }
 
-    // --- 3. (Optional) Integrate with an LLM (e.g., OpenAI) for analysis ---
-    // This is where "your own Open AI" comes into play for deeper insights.
-    // Example: Summarizing content, sentiment analysis, extracting entities.
 
-    // Initialize OpenAI client with your API key from environment variables
+    // --- 3. (Optional) Integrate with an LLM (e.g., OpenAI) for analysis (existing code) ---
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
     try {
         for (const result of allResults) {
-            // Only process if content exists and LLM key is available
             if (result.content && process.env.OPENAI_API_KEY) {
-                // Example: Summarize each result's content
+                // Summarization
                 const completion = await openai.chat.completions.create({
-                    model: "gpt-3.5-turbo", // You can use "gpt-4" or other models
+                    model: "gpt-3.5-turbo",
                     messages: [
                         { role: "system", content: "You are a helpful assistant that summarizes text concisely." },
                         { role: "user", content: `Summarize the following content in 30 words: ${result.content}` }
                     ],
-                    max_tokens: 50 // Adjust based on desired summary length
+                    max_tokens: 50
                 });
                 result.summary = completion.choices[0].message.content;
 
-                // Example: Sentiment analysis
+                // Sentiment analysis
                 const sentimentCompletion = await openai.chat.completions.create({
                     model: "gpt-3.5-turbo",
                     messages: [
                         { role: "system", content: "Analyze the sentiment of the following text and respond with only one word: positive, negative, or neutral." },
                         { role: "user", content: `Text: "${result.content}"` }
                     ],
-                    max_tokens: 5 // Just one word
+                    max_tokens: 5
                 });
                 result.sentiment = sentimentCompletion.choices[0].message.content.toLowerCase().trim();
             }
         }
     } catch (llmError) {
         console.error("LLM integration error:", llmError);
-        // Handle LLM errors gracefully, perhaps by skipping LLM processing for that item
-        // or logging the error without failing the entire search.
     }
 
 
-    // --- 4. Apply Filters (if not already done by platform APIs) ---
-    // It's often more efficient to filter as much as possible at the API source,
-    // but you might need to apply additional filters here on the aggregated data.
+    // --- 4. Apply Filters (existing code, ensure consistency with new data) ---
     let finalFilteredResults = allResults.filter(item => {
         const itemText = (item.title + ' ' + item.content + ' ' + (item.keywords ? item.keywords.join(' ') : '')).toLowerCase();
 
-        // Keyword filter (backend-side re-check for consistency)
+        // Keyword filter
         if (keyword && mustMatch && !itemText.includes(keyword.toLowerCase())) {
             return false;
         }
-        // If 'mustMatch' is false, the keyword is optional.
-        // If a keyword is provided and not found, it's still filtered out unless mustMatch is false.
-        // The previous logic for !mustMatch was a bit confusing. Let's simplify:
-        // If keyword is provided AND mustMatch is false AND itemText does NOT include keyword,
-        // it means the keyword was provided but wasn't found, so it should be filtered out.
-        // If keyword is empty, it passes this check.
         if (keyword && !mustMatch && !itemText.includes(keyword.toLowerCase())) {
-            return false;
+            if (keyword.length > 0 && !itemText.includes(keyword.toLowerCase())) {
+                return false;
+            }
         }
 
-
-        // Date filter
+        // Date filter (re-checked here for combined results)
         const itemDate = new Date(item.date);
         const now = new Date();
 
@@ -182,19 +204,17 @@ exports.handler = async (event, context) => {
                 if ((now - itemDate) > (7 * 24 * 60 * 60 * 1000)) return false;
                 break;
             case 'past_month':
-                if ((now - itemDate) > (30 * 24 * 60 * 60 * 1000)) return false; // Approx month
+                if ((now - itemDate) > (30 * 24 * 60 * 60 * 1000)) return false;
                 break;
             case 'past_year':
-                if ((now - itemDate) > (365 * 24 * 60 * 60 * 1000)) return false; // Approx year
+                if ((now - itemDate) > (365 * 24 * 60 * 60 * 1000)) return false;
                 break;
             case 'latest':
-                // 'latest' implies sorting, not filtering a time range. No filter needed here.
                 break;
-            // 'oldest' is also a sort order.
         }
 
-        // Source filter
-        // Ensure sourceFilter matches the format in mock data (e.g., 'khaleej_times')
+        // Source filter (re-checked here for combined results)
+        // Normalize sourceFilter for comparison if needed (e.g., 'khaleej_times' vs 'Khaleej Times')
         if (sourceFilter !== 'all' && item.source !== sourceFilter) return false;
 
         // Content Type filter
@@ -216,14 +236,12 @@ exports.handler = async (event, context) => {
     }
 
 
-    // 5. Return results to frontend
+    // 5. Return results to frontend (existing code)
     return {
         statusCode: 200,
         body: JSON.stringify(finalFilteredResults),
         headers: {
             'Content-Type': 'application/json',
-            // IMPORTANT: Add CORS headers to allow your frontend to access this function.
-            // In development, '*' is fine. In production, replace '*' with your Netlify site URL (e.g., 'https://your-site-name.netlify.app').
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'POST, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type',
