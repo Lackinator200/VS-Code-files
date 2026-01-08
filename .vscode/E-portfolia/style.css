@@ -1,0 +1,132 @@
+html {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-y: hidden;
+    width: 100%;
+}
+body {
+    margin: 0;
+    padding: 0;
+    overflow-y: hidden;
+    width: 100%;
+}
+.nav-Bar {
+    background: linear-gradient(to right, #5096f9, #0515cc);
+    color: white;
+    padding: 10px;
+    text-align: center;
+    height: 40px;   
+}
+
+.nav-Bar .left {
+    float: left;
+    text-align: left;
+}
+
+.nav-Bar .left img {
+    height: 40px;
+    vertical-align: middle;
+}
+
+.nav-Bar .left h3 {
+    display: inline;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.nav-Bar .right {
+    float: right;
+    text-align: right;
+}
+
+.nav-Bar .right button {
+    background: none;
+    color: white;
+    border: none;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 2%;
+}
+
+.hero {
+    width: 100%;
+}
+
+.hero-Image {
+    background-image: url(Photo/download.png);
+    background-size: cover;
+    text-align: center;
+    z-index: -1;
+    width: 100%;
+    height: 400px;
+}
+
+.hero h1 {
+    color: white;
+    font-size: 28px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-shadow: 2px 2px 4px #000000;
+    margin-top: -120px;
+}
+
+.dropping-texts {
+  display: inline-block;
+  width: 180px;
+  text-align: left;
+  height: 36px;
+  vertical-align: -2px;
+  position: relative; /* contain absolutely positioned children */
+  overflow: hidden;   /* prevent stacked words from showing */
+}
+
+.dropping-texts > div {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 22px;
+  opacity: 0;
+  font-weight: 300;
+  box-shadow: 0px 60px 25px -20px rgba(0,0,0,0.5);
+  transform: translateY(-25px) rotate(-10deg);
+  animation: roll 8s linear infinite;
+}
+
+.dropping-texts > div:nth-child(1) { animation-delay: 0s; }
+.dropping-texts > div:nth-child(2) { animation-delay: 1s; }
+.dropping-texts > div:nth-child(3) { animation-delay: 2s; }
+.dropping-texts > div:nth-child(4) { animation-delay: 3s; }
+.dropping-texts > div:nth-child(5) { animation-delay: 4s; }
+.dropping-texts > div:nth-child(6) { animation-delay: 5s; }
+.dropping-texts > div:nth-child(7) { animation-delay: 6s; }
+.dropping-texts > div:nth-child(8) { animation-delay: 7s; }
+
+@keyframes roll {
+  0% {
+    opacity: 0;
+    transform: translateY(-25px) rotate(-10deg);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    opacity: 0;
+    transform: translateY(25px) rotate(10deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(25px) rotate(10deg);
+  }
+}
+
+
