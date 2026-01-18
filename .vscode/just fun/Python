@@ -1,5 +1,0 @@
-import turtle as t
-def draw_square(side_length):
-    for _ in range(4):
-        t.forward(side_length)
-        t.right(90)
