@@ -1,0 +1,29 @@
+html {
+    height: 10000px;
+}
+.square {
+    width: 200px;
+    height: 200px;
+    background-color: lightblue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    color: #333;
+    border: 2px solid #000;
+}
+
+.circle {
+    width: 200px;
+    height: 200px;
+    background-color: lightcoral;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    color: #333;
+    border: 2px solid #000;
+}
